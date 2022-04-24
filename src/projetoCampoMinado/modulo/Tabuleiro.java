@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import projetoCampoMinado.excecao.ExplosaoException;
+
 public class Tabuleiro {
 
 	private int linhas;
@@ -28,9 +30,9 @@ public class Tabuleiro {
 		Predicate<Campo> minado = c -> c.isMinado();
 
 		do {
-			minasArmadas = campos.stream().filter(minado).count();
 			int aleatorio = (int) (Math.random() * campos.size());
 			campos.get(aleatorio).minar();
+			minasArmadas = campos.stream().filter(minado).count();
 		}while(minasArmadas < minas);
 		
 		
@@ -55,11 +57,22 @@ public class Tabuleiro {
 	}
 	
 	public void abrir(int linha, int coluna) {
-		campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna).findFirst().ifPresent(c -> c.abrir());;
-	}
+		try {
+		
+		campos.stream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+		.findFirst().ifPresent(c -> c.abrir());;
+		
+		}catch(ExplosaoException e) {
+		campos.forEach(c -> c.setAberto(true));
+			
+			throw e;
+		
+		}
+		}
     
 	public void alternarMarcacao(int linha, int coluna) {
-		campos.parallelStream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna).findFirst().ifPresent(c -> c.alternarMarcacao());;
+		campos.stream().filter(c -> c.getLinha() == linha && c.getColuna() == coluna)
+		.findFirst().ifPresent(c -> c.alternarMarcacao());;
 	}
     
 
@@ -69,8 +82,9 @@ public class Tabuleiro {
 	}
 	
 	public void reiniciar(){
-		campos.stream().forEach(c -> c.resetar());
+		campos.forEach(c -> c.resetar());
 		sortearMinas();
+		
 	}
 	
 	public String toString() {

@@ -72,6 +72,10 @@ public class Campo {
 	public boolean isAberto() {
 		return aberto;
 	}
+	
+	public boolean isFechado() {
+		return !aberto;
+	}
 
 	public boolean isMinado() {
 		return minado;
@@ -99,6 +103,11 @@ public class Campo {
 	}
 	
 	
+	
+	public void setAberto(boolean aberto) {
+		this.aberto = aberto;
+	}
+
 	public String toString() {
 		if(marcado)
 			return "!";
